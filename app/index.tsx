@@ -1,24 +1,14 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Image } from "react-native";
-import { Avatar, Card, Layout, Spinner, Text } from "@ui-kitten/components";
+import { FlatList, StyleSheet, View } from "react-native";
 
-type Article = {
-  source: {
-    id: string | null;
-    name: string;
-  };
-  author: string;
-  title: string;
-  description: string;
-  url: string;
-  urlToImage: string;
-  publishedAt: string;
-  content: string;
-};
+import { Layout, Spinner, Text } from "@ui-kitten/components";
 
-const allNewsUrl = `${process.env.EXPO_PUBLIC_NEWS_API_BASE_URL}/everything?q=australia&pageSize=1&apiKey=${process.env.EXPO_PUBLIC_NEWS_API_KEY}`;
+import NewsCard, { Article } from "./components/news-card";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function HomeScreen() {
+const allNewsUrl = `${process.env.EXPO_PUBLIC_NEWS_API_BASE_URL}/everything?q=tech&pageSize=10&apiKey=${process.env.EXPO_PUBLIC_NEWS_API_KEY}`;
+
+const HomeScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [articles, setArticles] = useState<Article[]>([]);
 
@@ -42,44 +32,47 @@ export default function HomeScreen() {
   };
 
   return (
-    <Layout style={styles.center}>
-      <Text category="h1">News</Text>
-      {loading ? (
-        <Spinner size="giant" />
-      ) : (
-        <View style={styles.cardContainer}>
-          <Card>
-            <Avatar
-              // style={styles.avatar}
-              shape="square"
-              ImageComponent={() => (
-                <Image
-                  style={styles.image}
-                  source={{ uri: articles[0]?.urlToImage }}
-                />
-              )}
+    <SafeAreaView style={styles.rootContainer}>
+      <Text style={styles.header} category="h1">
+        News
+      </Text>
+      <Layout style={styles.layout}>
+        {loading ? (
+          <Spinner size="giant" />
+        ) : (
+          <View style={styles.newsContainer}>
+            <FlatList
+              data={articles}
+              keyExtractor={(_item, index) => index.toString()}
+              renderItem={({ item }) => <NewsCard article={item} />}
             />
-            <Text category="h6">{articles[0]?.title}</Text>
-            <Text category="c2">{articles[0]?.description}</Text>
-          </Card>
-        </View>
-      )}
-      {}
-    </Layout>
+          </View>
+        )}
+      </Layout>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  center: {
+  header: {
+    margin: 5,
+  },
+  layout: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    height: "100%",
+    width: "100%",
   },
-  cardContainer: {
-    margin: 20,
+  rootContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  image: {
-    width: 96,
-    height: 96,
+  newsContainer: {
+    padding: 20,
   },
 });
+
+export default HomeScreen;
