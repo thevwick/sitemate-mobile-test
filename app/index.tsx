@@ -1,20 +1,48 @@
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { Button, Input, Layout, Spinner, Text } from "@ui-kitten/components";
+import {
+  Button,
+  Input,
+  Layout,
+  MenuItem,
+  OverflowMenu,
+  Spinner,
+  Text,
+} from "@ui-kitten/components";
 import useFetchNews from "@/hooks/use-fetch-news";
-
 import NewsCard from "./components/news-card";
 
 const HomeScreen: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>(query);
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+
   const { loading, articles } = useFetchNews(searchQuery);
 
   const handleSearch = () => {
-    setSearchQuery(query);
+    if (query.trim()) {
+      setSearchQuery(query);
+      setSearchHistory((prevHistory) => [...new Set([query, ...prevHistory])]);
+    }
   };
+
+  const onPressHistory = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const handleHistoryItemClick = (item: string) => {
+    setQuery(item);
+    setSearchQuery(item);
+    setMenuVisible(false);
+  };
+
+  const renderMenuButton = () => (
+    <Button size="small" style={styles.historyButton} onPress={onPressHistory}>
+      History
+    </Button>
+  );
 
   return (
     <SafeAreaView style={styles.rootContainer}>
@@ -22,13 +50,30 @@ const HomeScreen: React.FC = () => {
         News
       </Text>
       <View style={styles.searchContainer}>
+        {searchHistory.length ? (
+          <OverflowMenu
+            anchor={renderMenuButton}
+            visible={menuVisible}
+            onBackdropPress={onPressHistory}
+            style={styles.menu}
+          >
+            {searchHistory.map((item, index) => (
+              <MenuItem
+                key={index}
+                title={item}
+                onPress={() => handleHistoryItemClick(item)}
+                style={styles.menuItem}
+              />
+            ))}
+          </OverflowMenu>
+        ) : null}
         <Input
           style={styles.searchInput}
           value={query}
           onChangeText={setQuery}
           placeholder="Search for news..."
         />
-        <Button style={styles.searchButton} onPress={handleSearch}>
+        <Button size="small" style={styles.searchButton} onPress={handleSearch}>
           Search
         </Button>
       </View>
@@ -65,6 +110,17 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     paddingHorizontal: 10,
+  },
+  historyButton: {
+    marginRight: 10,
+  },
+  menu: {
+    backgroundColor: "#f0f0f0",
+  },
+  menuItem: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
   },
   layout: {
     flex: 1,
