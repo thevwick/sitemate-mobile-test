@@ -16,7 +16,7 @@ export type Article = {
   content: string;
 };
 
-const useFetchNews = () => {
+const useFetchNews = (query: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [articles, setArticles] = useState<Article[]>([]);
 
@@ -24,7 +24,7 @@ const useFetchNews = () => {
     const getNews = async () => {
       setLoading(true);
       try {
-        const fetchedArticles = await fetchNews();
+        const fetchedArticles = await fetchNews(query);
         setArticles(fetchedArticles);
       } catch (error) {
         console.error("Error fetching data:", JSON.stringify(error));
@@ -34,7 +34,7 @@ const useFetchNews = () => {
     };
 
     getNews();
-  }, []);
+  }, [query]);
 
   return { loading, articles };
 };
