@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Layout, Spinner, Text } from "@ui-kitten/components";
+import { Article } from "@/hooks/use-fetch-news";
 
-import NewsCard, { Article } from "./components/news-card";
-import { SafeAreaView } from "react-native-safe-area-context";
+import NewsCard from "./components/news-card";
 
 const allNewsUrl = `${process.env.EXPO_PUBLIC_NEWS_API_BASE_URL}/everything?q=tech&pageSize=10&apiKey=${process.env.EXPO_PUBLIC_NEWS_API_KEY}`;
 

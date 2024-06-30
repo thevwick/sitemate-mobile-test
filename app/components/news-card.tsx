@@ -3,20 +3,7 @@ import { StyleSheet, View, Image } from "react-native";
 import * as Linking from "expo-linking";
 
 import { Avatar, Card, Text, Button } from "@ui-kitten/components";
-
-export type Article = {
-  source: {
-    id: string | null;
-    name: string;
-  };
-  author: string;
-  title: string;
-  description: string;
-  url: string;
-  urlToImage: string;
-  publishedAt: string;
-  content: string;
-};
+import { Article } from "@/hooks/use-fetch-news";
 
 type NewsCardProps = {
   article: Article;
