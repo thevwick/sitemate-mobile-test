@@ -20,7 +20,11 @@ const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
         <Avatar
           shape="square"
           ImageComponent={() => (
-            <Image style={styles.image} source={{ uri: article.urlToImage }} />
+            <Image
+              testID="article-image"
+              style={styles.image}
+              source={{ uri: article.urlToImage }}
+            />
           )}
         />
         <Text style={styles.title} category="h6">
